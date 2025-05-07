@@ -20,15 +20,6 @@ DCS-ICE receives battlefield events and facts from DCS World missions (via Expor
 - Go 1.18 or later
 - DCS World installation (for integration)
 
-### Installation
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/bass4/dcs-ice.git
-   cd dcs-ice
-   ```
-
-2. Install dependencies:
    ```
    go mod download
    ```
