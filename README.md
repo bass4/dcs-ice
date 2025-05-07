@@ -1,4 +1,4 @@
-# DCS-ICE (Intelligent Command Environment)
+# DCS-ICE (Intelligent Command Engine)
 
 A system for evaluating battlefield events from DCS World missions using rule-based logic.
 
