@@ -1,0 +1,14 @@
+rule UnitDestroyedInZoneBravo "Responds when a unit is destroyed in zone BRAVO" {
+    when
+        Facts[0].Event == "unit_destroyed" && Facts[0].Zone == "BRAVO"
+    then
+        Response.MatchedRules = append(Response.MatchedRules, "UnitDestroyedInZoneBravo");
+        Response.Actions = append(Response.Actions, models.Action{
+            Type: "spawn",
+            Target: "reinforcement",
+            Parameters: map[string]string{
+                "location": "BRAVO",
+                "type": "SAM"
+            }
+        });
+}
