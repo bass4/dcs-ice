@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/bass4/dcs-ice/internal/rules"

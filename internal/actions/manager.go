@@ -25,12 +25,79 @@ func NewManager() *Manager {
 
 // CreateAction creates a new action and adds it to the response
 // This method is exposed to the rule engine
-func (m *Manager) CreateAction(actionType, target string, parameters map[string]string) models.Action {
+func (m *Manager) CreateAction(actionType, target string) models.Action {
 	action := models.Action{
 		Type:       actionType,
 		Target:     target,
-		Parameters: parameters,
+		Parameters: make(map[string]string),
 		Timestamp:  time.Now().UnixNano() / int64(time.Millisecond),
+	}
+
+	m.mutex.Lock()
+	m.actionHistory = append(m.actionHistory, action)
+	m.mutex.Unlock()
+
+	// Notify observers
+	m.notifyObservers(action)
+
+	return action
+}
+
+// CreateSimpleSpawnAction creates a spawn action with location and type parameters
+func (m *Manager) CreateSimpleSpawnAction(target, location, unitType string) models.Action {
+	action := models.Action{
+		Type:   "spawn",
+		Target: target,
+		Parameters: map[string]string{
+			"location": location,
+			"type":     unitType,
+		},
+		Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+	}
+
+	m.mutex.Lock()
+	m.actionHistory = append(m.actionHistory, action)
+	m.mutex.Unlock()
+
+	// Notify observers
+	m.notifyObservers(action)
+
+	return action
+}
+
+// CreateSpawnActionWithCount creates a spawn action with location, type and count parameters
+func (m *Manager) CreateSpawnActionWithCount(target, location, unitType, count string) models.Action {
+	action := models.Action{
+		Type:   "spawn",
+		Target: target,
+		Parameters: map[string]string{
+			"location": location,
+			"type":     unitType,
+			"count":    count,
+		},
+		Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+	}
+
+	m.mutex.Lock()
+	m.actionHistory = append(m.actionHistory, action)
+	m.mutex.Unlock()
+
+	// Notify observers
+	m.notifyObservers(action)
+
+	return action
+}
+
+// CreateAlertAction creates an alert action with the specified level and message
+func (m *Manager) CreateAlertAction(target, level, message string) models.Action {
+	action := models.Action{
+		Type:   "alert",
+		Target: target,
+		Parameters: map[string]string{
+			"level":   level,
+			"message": message,
+		},
+		Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
 	}
 
 	m.mutex.Lock()
