@@ -1,9 +1,10 @@
-module github.com/yourusername/dcs-ice
+module github.com/bass4/dcs-ice
 
 go 1.18
 
 require (
 	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/hyperjumptech/grule-rule-engine v1.12.0
 )
 

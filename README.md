@@ -24,7 +24,7 @@ DCS-ICE receives battlefield events and facts from DCS World missions (via Expor
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/dcs-ice.git
+   git clone https://github.com/bass4/dcs-ice.git
    cd dcs-ice
    ```
 

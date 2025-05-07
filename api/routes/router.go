@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/yourusername/dcs-ice/internal/rules"
+	"github.com/bass4/dcs-ice/internal/rules"
 )
 
 // SetupRoutes configures the HTTP routes

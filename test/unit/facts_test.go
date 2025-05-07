@@ -3,7 +3,7 @@ package unit
 import (
 	"testing"
 
-	"github.com/yourusername/dcs-ice/pkg/models"
+	"github.com/bass4/dcs-ice/pkg/models"
 )
 
 func TestFactCreation(t *testing.T) {

@@ -1,0 +1,72 @@
+// File: config/rules/zone_events.grl
+
+rule UnitDestroyedInZoneBravo "Responds when a unit is destroyed in zone BRAVO" {
+    when
+        FactContext.Facts[0].Event == "unit_destroyed" && 
+        FactContext.Facts[0].Zone == "BRAVO"
+    then
+        action = ActionManager.CreateAction("spawn", "reinforcement", map[string]string{
+            "location": "BRAVO",
+            "type": "SAM",
+            "count": "2"
+        });
+        FactContext.Response.Actions = append(FactContext.Response.Actions, action);
+        FactContext.Response.MatchedRules = append(FactContext.Response.MatchedRules, "UnitDestroyedInZoneBravo");
+}
+
+rule UnitDestroyedInZoneAlpha "Responds when a unit is destroyed in zone ALPHA" {
+    when
+        FactContext.Facts[0].Event == "unit_destroyed" && 
+        FactContext.Facts[0].Zone == "ALPHA"
+    then
+        action = ActionManager.CreateAction("spawn", "reinforcement", map[string]string{
+            "location": "ALPHA",
+            "type": "AAA",
+            "count": "3"
+        });
+        FactContext.Response.Actions = append(FactContext.Response.Actions, action);
+        FactContext.Response.MatchedRules = append(FactContext.Response.MatchedRules, "UnitDestroyedInZoneAlpha");
+}
+
+// File: config/rules/alert_levels.grl
+
+rule RedAlertLevel "Responds to red alert level in any zone" {
+    when
+        FactContext.Facts[0].AlertLevel == "red"
+    then
+        action = ActionManager.CreateAction("alert", "command", map[string]string{
+            "level": "red",
+            "message": "Red alert in zone " + FactContext.Facts[0].Zone
+        });
+        FactContext.Response.Actions = append(FactContext.Response.Actions, action);
+        FactContext.Response.MatchedRules = append(FactContext.Response.MatchedRules, "RedAlertLevel");
+}
+
+rule ChainedSpawnFighterOnRedAlert "Chain rule that spawns fighters on red alert" {
+    when
+        containsString(FactContext.Response.MatchedRules, "RedAlertLevel")
+    then
+        action = ActionManager.CreateAction("spawn", "air_defense", map[string]string{
+            "type": "fighter",
+            "count": "2",
+            "location": FactContext.Facts[0].Zone
+        });
+        FactContext.Response.Actions = append(FactContext.Response.Actions, action);
+        FactContext.Response.MatchedRules = append(FactContext.Response.MatchedRules, "ChainedSpawnFighterOnRedAlert");
+}
+
+// Helper function to check if a string slice contains a string
+rule DefineContainsStringFunction "Define helper function to check string in slice" {
+    when
+        true
+    then
+        Retract("DefineContainsStringFunction");
+        function containsString(slice []string, s string) bool {
+            for _, item := range slice {
+                if item == s {
+                    return true;
+                }
+            }
+            return false;
+        }
+}
