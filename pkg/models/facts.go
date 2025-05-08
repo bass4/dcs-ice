@@ -1,15 +1,12 @@
 package models
 
-// Fact represents a single fact received from DCS World
+// Fact represents a piece of information for the rules engine
 type Fact struct {
-	Event      string            `json:"event"`
-	Unit       string            `json:"unit"`
-	Zone       string            `json:"zone"`
-	AlertLevel string            `json:"alertLevel"`
-	Attributes map[string]string `json:"attributes,omitempty"`
-}
-
-// FactsRequest represents the incoming request to evaluate facts
-type FactsRequest struct {
-	Facts []Fact `json:"facts"`
+    ID        string `json:"id,omitempty"`
+    Type      string `json:"type"`
+    Value     string `json:"value"`
+    Zone      string `json:"zone,omitempty"`
+    UnitType  string `json:"unit_type,omitempty"`
+    GroupName string `json:"group_name,omitempty"`
+    Count     string `json:"count,omitempty"`
 }

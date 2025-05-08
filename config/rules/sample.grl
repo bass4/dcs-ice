@@ -1,7 +1,0 @@
-// File: config/rules/sample.grl
-rule ExampleRule "A simple example rule" {
-    when
-        FactContext.Facts[0].Event == "unit_damaged"
-    then
-        FactContext.Response.MatchedRules = append(FactContext.Response.MatchedRules, "ExampleRule");
-}

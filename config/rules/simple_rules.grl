@@ -1,0 +1,25 @@
+// config/rules/simple_rules.grl
+
+rule UnitDestroyedInBravo "Rule for unit destroyed in BRAVO" {
+    when
+        Message.Event == "unit_destroyed" &&
+        Message.Zone == "BRAVO"
+    then
+        Actions.AddSpawnAction("reinforcement", "BRAVO", "SAM", "2");
+}
+
+rule UnitDestroyedInAlpha "Rule for unit destroyed in ALPHA" {
+    when
+        Message.Event == "unit_destroyed" &&
+        Message.Zone == "ALPHA"
+    then
+        Actions.AddSpawnAction("reinforcement", "ALPHA", "AAA", "3");
+}
+
+rule RedAlert "Rule for red alert" {
+    when
+        Message.Event == "alert_level_change" &&
+        Message.Level == "red"
+    then
+        Actions.AddAlertAction("command", "red", "Red alert active");
+}
