@@ -1,0 +1,18 @@
+curl -X POST http://localhost:8080/api/dcs/batch \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "event_type": "unit_detected",
+      "timestamp": 1683472980,
+      "data": {
+        "zone": "ALPHA"
+      }
+    },
+    {
+      "event_type": "unit_detected",
+      "timestamp": 1683472985,
+      "data": {
+        "zone": "BRAVO"
+      }
+    }
+  ]'

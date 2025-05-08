@@ -1,0 +1,14 @@
+{
+  "host": "127.0.0.1",
+  "port": 8080,
+  "rules_dirs": [
+    "config/rules",
+    "config/custom_rules"
+  ],
+  "rules_files": [
+    "config/special/special_rule.grl"
+  ],
+  "log_level": "info",
+  "log_file": "logs/dcs-ice.log",
+  "max_cycles": 5
+}

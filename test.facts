@@ -1,0 +1,64 @@
+# Test a unit destroyed event
+curl -X POST http://localhost:8080/api/dcs/event \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_type": "unit_destroyed",
+    "timestamp": 1683472982,
+    "data": {
+      "unit_name": "F-16C_1",
+      "unit_type": "F-16C",
+      "coalition": "blue",
+      "group_name": "Blue_Fighter_Group_1",
+      "zone": "BRAVO",
+      "position": {
+        "x": 123456.78,
+        "y": 500.0,
+        "z": 234567.89
+      }
+    }
+  }'
+
+# Test an alert level change
+curl -X POST http://localhost:8080/api/dcs/event \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_type": "alert_level_change",
+    "timestamp": 1683472990,
+    "data": {
+      "level": "red",
+      "zone": "ALPHA",
+      "reason": "multiple_threats_detected"
+    }
+  }'
+
+
+#test batch of facts
+#
+curl -X POST http://localhost:8080/api/dcs/batch \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "event_type": "alert_level_change",
+      "timestamp": 1683472980,
+      "data": {
+        "level": "yellow",
+        "zone": "ALPHA",
+        "reason": "suspicious_activity"
+      }
+    },
+    {
+      "event_type": "unit_detected",
+      "timestamp": 1683472985,
+      "data": {
+        "unit_name": "MiG-29_1",
+        "unit_type": "MiG-29",
+        "coalition": "red",
+        "group_name": "Red_Fighter_Group_1",
+        "zone": "ALPHA",
+        "count": "3",
+        "detection_type": "radar"
+      }
+    }
+  ]'
+
+

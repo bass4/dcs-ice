@@ -136,10 +136,12 @@ func DCSWebSocketHandler(ruleEngine *rules.RuleEngine) http.HandlerFunc {
     }
 }
 
+// internal/api/handlers.go
+
 // ReloadRulesHandler provides an endpoint to reload rules
 func ReloadRulesHandler(ruleEngine *rules.RuleEngine) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        if err := ruleEngine.LoadRules(); err != nil {
+        if err := ruleEngine.ReloadRules(); err != nil {
             http.Error(w, "Failed to reload rules: "+err.Error(), http.StatusInternalServerError)
             return
         }
@@ -151,7 +153,6 @@ func ReloadRulesHandler(ruleEngine *rules.RuleEngine) http.HandlerFunc {
 
 // Helper functions for data conversion
 
-// convertDCSEventToMessage converts a DCS event to a Message
 // convertDCSEventToMessage converts a DCS event to a Message
 func convertDCSEventToMessage(dcsEvent DCSEvent) *models.Message {
     message := models.NewMessage(dcsEvent.EventType)
