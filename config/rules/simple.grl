@@ -1,0 +1,6 @@
+rule AlwaysMatch "This rule should always match" {
+    when
+        true
+    then
+        Actions.AddAlertAction("test", "info", "This is a test alert");
+}

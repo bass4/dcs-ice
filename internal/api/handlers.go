@@ -152,6 +152,7 @@ func ReloadRulesHandler(ruleEngine *rules.RuleEngine) http.HandlerFunc {
 // Helper functions for data conversion
 
 // convertDCSEventToMessage converts a DCS event to a Message
+// convertDCSEventToMessage converts a DCS event to a Message
 func convertDCSEventToMessage(dcsEvent DCSEvent) *models.Message {
     message := models.NewMessage(dcsEvent.EventType)
     
@@ -187,6 +188,7 @@ func convertDCSEventToMessage(dcsEvent DCSEvent) *models.Message {
     
     return message
 }
+
 
 // convertActionsToDCSResponse converts internal actions to DCS response format
 func convertActionsToDCSResponse(actions []models.Action) DCSResponse {
@@ -227,4 +229,60 @@ func convertActionsToDCSResponse(actions []models.Action) DCSResponse {
     }
 
     return response
+}
+// in internal/api/handlers.go
+// Add a function to batch process messages
+
+// BatchProcessEvents processes multiple events at once
+func BatchProcessEvents(ruleEngine *rules.RuleEngine, dcsEvents []DCSEvent) ([]models.Action, error) {
+    var messages []*models.Message
+    
+    // Convert all events to messages
+    for _, event := range dcsEvents {
+        message := convertDCSEventToMessage(event)
+        messages = append(messages, message)
+    }
+    
+    // Process all messages at once
+    return ruleEngine.ProcessMessages(messages)
+}
+
+// Add to handlers.go
+// BatchDCSEventHandler handles batches of DCS events
+func BatchDCSEventHandler(ruleEngine *rules.RuleEngine) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // Parse the incoming JSON array
+        var dcsEvents []DCSEvent
+        if err := json.NewDecoder(r.Body).Decode(&dcsEvents); err != nil {
+            http.Error(w, "Invalid JSON: "+err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        fmt.Printf("Received batch of %d events\n", len(dcsEvents))
+        for i, event := range dcsEvents {
+            fmt.Printf("Event %d: Type=%s, Zone=%s\n", i, event.EventType, 
+                event.Data["zone"])
+        }
+
+        // Process all events at once
+        actions, err := BatchProcessEvents(ruleEngine, dcsEvents)
+        if err != nil {
+            http.Error(w, "Rule processing failed: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        // Convert actions to DCS response format
+        dcsResponse := convertActionsToDCSResponse(actions)
+        
+        fmt.Printf("Response: %+v\n", dcsResponse)
+
+        // Send response back to DCS
+        w.Header().Set("Content-Type", "application/json")
+        if err := json.NewEncoder(w).Encode(dcsResponse); err != nil {
+            http.Error(w, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
+            return
+        }
+        
+        fmt.Println("Response sent successfully")
+    }
 }

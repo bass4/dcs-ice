@@ -112,3 +112,50 @@ func (re *RuleEngine) ProcessMessage(message *models.Message) ([]models.Action, 
     
     return actions, nil
 }
+
+// ProcessMessages processes multiple DCS messages through the rules engine
+func (re *RuleEngine) ProcessMessages(messages []*models.Message) ([]models.Action, error) {
+    fmt.Printf("Processing %d messages\n", len(messages))
+    
+    for i, msg := range messages {
+        fmt.Printf("Message %d: Event=%s, Zone=%s\n", i, msg.Event, msg.Zone)
+    }
+    
+    // Create a message collection
+    messageCollection := models.NewMessageCollection()
+    for _, msg := range messages {
+        messageCollection.AddMessage(msg)
+    }
+    
+    // Get the knowledge base
+    kb := re.knowledgeLibrary.GetKnowledgeBase(KnowledgeBaseName, KnowledgeBaseVersion)
+    
+    // Create an ActionCollector to store actions
+    actionCollector := models.NewActionCollector()
+    
+    // Create data context
+    dataContext := ast.NewDataContext()
+    if err := dataContext.Add("Messages", messageCollection); err != nil {
+        return nil, fmt.Errorf("failed to add message collection to data context: %v", err)
+    }
+    if err := dataContext.Add("Actions", actionCollector); err != nil {
+        return nil, fmt.Errorf("failed to add action collector to data context: %v", err)
+    }
+    
+    // Set max cycle to 1 to avoid loops
+    re.engine.MaxCycle = 1
+    
+    // Execute rules - ignore max cycle error
+    err := re.engine.Execute(dataContext, kb)
+    if err != nil {
+        fmt.Printf("Rule execution warning: %v\n", err)
+    }
+    
+    actions := actionCollector.GetActions()
+    fmt.Printf("Generated %d actions\n", len(actions))
+    for i, action := range actions {
+        fmt.Printf("Action %d: Type=%s, SubType=%s, Zone=%s\n", i, action.Type, action.SubType, action.Zone)
+    }
+    
+    return actions, nil
+}

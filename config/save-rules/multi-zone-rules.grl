@@ -1,0 +1,10 @@
+rule CoordinatedAttack "Detects a coordinated attack across multiple zones" {
+    when
+        Messages.HasDetectionsInBothZones("ALPHA", "BRAVO") &&
+        Messages.GetTotalDetectedUnits() > 3
+    then
+        Actions.AddAlertAction("warning", "red", "COORDINATED ATTACK DETECTED");
+        Actions.AddSpawnAction("defense", "ALPHA", "SAM", "2");
+        Actions.AddSpawnAction("defense", "BRAVO", "SAM", "2");
+        Actions.AddSpawnAction("counter", "CHARLIE", "fighter", "4");
+}

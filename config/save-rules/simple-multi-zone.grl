@@ -1,0 +1,6 @@
+rule DetectionInBothZones "Rule that triggers when units are detected in both ALPHA and BRAVO zones" {
+    when
+        Messages.HasDetectionsInBothZones("ALPHA", "BRAVO")
+    then
+        Actions.AddAlertAction("detection", "yellow", "Multiple zone detection: ALPHA and BRAVO");
+}

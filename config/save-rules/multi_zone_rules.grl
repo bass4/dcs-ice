@@ -1,0 +1,28 @@
+// config/rules/multi_zone_rules.grl
+
+rule DetectionInBothZones "Rule that triggers when units are detected in both ALPHA and BRAVO zones" {
+    when
+        Messages.HasDetectionsInBothZones("ALPHA", "BRAVO")
+    then
+        Actions.AddAlertAction("detection", "yellow", "Multiple zone detection: units detected in both ALPHA and BRAVO zones");
+        Actions.AddSpawnAction("recon", "ALPHA", "UAV", "1");
+        Actions.AddSpawnAction("recon", "BRAVO", "UAV", "1");
+}
+
+rule HighUnitCountDetection "Rule that triggers when many units are detected across all zones" {
+    when
+        Messages.GetTotalDetectedUnits() > 5
+    then
+        Actions.AddAlertAction("detection", "red", "High number of enemy units detected across multiple zones");
+        Actions.AddSpawnAction("defense", "ALPHA", "SAM", "2");
+        Actions.AddSpawnAction("defense", "BRAVO", "SAM", "2");
+}
+
+// We can still have simple rules working with individual messages
+rule SimpleDetectionInAlpha "Rule for simple detection in ALPHA" {
+    when
+        Messages.CountMessagesByEvent("unit_detected") > 0 &&
+        Messages.HasMessageInZone("ALPHA")
+    then
+        Actions.AddAlertAction("detection", "green", "Unit detected in zone ALPHA");
+}

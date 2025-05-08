@@ -1,0 +1,9 @@
+rule ComplexDetection "Handle multiple unit detection" {
+    when
+        Message.Event == "unit_detected" &&
+        Message.Zone == "ALPHA" &&
+        Message.Count > "3"  // Assuming you add number parsing
+    then
+        Actions.AddAlertAction("detection", "yellow", "Multiple units detected in zone ALPHA");
+        Actions.AddSpawnAction("recon", "ALPHA", "UAV", "1");
+}
